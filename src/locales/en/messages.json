@@ -1,0 +1,14 @@
+{
+  "extName": {
+    "message": "Copy as Two",
+    "description": "Name of the extension"
+  },
+  "extDescription": {
+    "message": "The browser extension to copy a Twitter URL to share with OGP",
+    "description": "Description of the extension"
+  },
+  "menuItemTwo": {
+    "message": "Copy as Two",
+    "description": "Title of the context menu"
+  }
+}
