@@ -1,0 +1,72 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Check current release version
+        run: |
+          VERSION=$(git fetch --tags && git tag | xargs -n1 test -z && echo '0.0.0' || git rev-list --tags --topo-order --max-count=1 | xargs git describe --tags)
+          echo "RELEASE_VERSION=${VERSION}" >> $GITHUB_ENV
+      - name: Check manifest version
+        working-directory: ./src/static
+        run: |
+          VERSION=$(cat manifest.json | grep -w version | cut -d ' ' -f 4 | tr -d ',' | tr -d '"')
+          echo "MANIFEST_VERSION=${VERSION}" >> $GITHUB_ENV
+      - name: Push next release tag
+        if: ${{ success() && env.RELEASE_VERSION != env.MANIFEST_VERSION }}
+        run: |
+          curl --fail --request POST \
+          --url https://api.github.com/repos/${{ github.repository }}/git/refs \
+          --header 'authorization: token ${{ secrets.GITHUB_TOKEN }}' \
+          --header 'content-type: application/json' \
+          --data '{
+            "ref": "refs/tags/${{ env.MANIFEST_VERSION }}",
+            "sha": "${{ github.sha }}"
+          }'
+      - uses: actions/setup-node@v2
+        if: ${{ success() && env.RELEASE_VERSION != env.MANIFEST_VERSION }}
+        with:
+          node-version: "15"
+
+      - name: Install deps
+        if: ${{ success() && env.RELEASE_VERSION != env.MANIFEST_VERSION }}
+        run: npm ci
+
+      - name: Build
+        if: ${{ success() && env.RELEASE_VERSION != env.MANIFEST_VERSION }}
+        run: npm run build
+
+      - name: Zip the extension
+        if: ${{ success() && env.RELEASE_VERSION != env.MANIFEST_VERSION }}
+        working-directory: ./dist
+        run: zip -r cat.zip .
+
+      - name: Create release
+        if: ${{ success() && env.RELEASE_VERSION != env.MANIFEST_VERSION }}
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ env.MANIFEST_VERSION }}
+          release_name: Release ${{ env.MANIFEST_VERSION }}
+
+      - name: Upload release asset
+        if: ${{ success() && env.RELEASE_VERSION != env.MANIFEST_VERSION }}
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./dist/cat.zip
+          asset_name: cat.zip
+          asset_content_type: application/zip
