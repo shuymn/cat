@@ -14,5 +14,5 @@
     "page": "background.html",
     "persistent": false
   },
-  "permissions": ["contextMenus", "tabs"]
+  "permissions": ["contextMenus"]
 }
