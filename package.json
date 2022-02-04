@@ -11,7 +11,7 @@
     "update": "npx npm-check-updates -u && npm install"
   },
   "devDependencies": {
-    "@types/chrome": "^0.0.177",
+    "@types/chrome": "^0.0.178",
     "@types/node": "^16.11.21",
     "@typescript-eslint/eslint-plugin": "^5.10.1",
     "@typescript-eslint/parser": "^5.10.1",
