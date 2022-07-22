@@ -13,8 +13,8 @@
   "devDependencies": {
     "@types/chrome": "^0.0.193",
     "@types/node": "^16.11.22",
-    "@typescript-eslint/eslint-plugin": "^5.30.6",
-    "@typescript-eslint/parser": "^5.30.6",
+    "@typescript-eslint/eslint-plugin": "^5.30.7",
+    "@typescript-eslint/parser": "^5.30.7",
     "copy-webpack-plugin": "^10.2.4",
     "eslint": "^8.20.0",
     "eslint-config-prettier": "^7.2.0",
