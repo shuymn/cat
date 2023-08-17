@@ -32,7 +32,7 @@ jobs:
             "ref": "refs/tags/${{ env.MANIFEST_VERSION }}",
             "sha": "${{ github.sha }}"
           }'
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v3
         if: ${{ success() && env.RELEASE_VERSION != env.MANIFEST_VERSION }}
         with:
           node-version: "15"
